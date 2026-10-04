@@ -1,0 +1,24 @@
+{
+  "add_bos_token": false,
+  "add_prefix_space": false,
+  "added_tokens_decoder": {
+    "151643": {
+      "content": "<|endoftext|>",
+      "lstrip": false,
+      "normalized": false,
+      "rstrip": false,
+      "single_word": false,
+      "special": true
+    }
+  },
+  "additional_special_tokens": [],
+  "bos_token": null,
+  "clean_up_tokenization_spaces": false,
+  "eos_token": "<|endoftext|>",
+  "errors": "replace",
+  "model_max_length": 2048,
+  "pad_token": "<|endoftext|>",
+  "split_special_tokens": false,
+  "tokenizer_class": "PreTrainedTokenizerFast",
+  "unk_token": null
+}

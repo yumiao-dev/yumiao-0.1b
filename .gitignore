@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Training artifacts (not part of the release)
+ckpt/
+ckpt_sft/
+data/
+*.pt
+*.log
+runs/
+
+# OS
+.DS_Store
+Thumbs.db

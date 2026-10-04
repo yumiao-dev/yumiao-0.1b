@@ -1,0 +1,20 @@
+{
+  "architectures": ["Yumiao"],
+  "model_type": "yumiao",
+  "hidden_size": 512,
+  "num_hidden_layers": 10,
+  "num_attention_heads": 8,
+  "num_key_value_heads": 2,
+  "head_dim": 64,
+  "intermediate_size": 2048,
+  "vocab_size": 151665,
+  "max_position_embeddings": 2048,
+  "rope_theta": 500000.0,
+  "rms_norm_eps": 1e-06,
+  "hidden_act": "silu",
+  "tie_word_embeddings": true,
+  "attention_bias": false,
+  "qk_norm": true,
+  "torch_dtype": "float16",
+  "initializer_range": 0.02
+}
