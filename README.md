@@ -1,10 +1,27 @@
+<div align="center">
+
 # Yumiao-0.1B
 
-A **115.7M-parameter** Chinese-first language model, trained **from scratch** on 1B tokens.
+**A 115.7M-parameter Chinese-first language model, trained from scratch on 1B tokens.**
 
-This is a small, fully open, educational-scale model. It is not competitive with modern LLMs —
-its value is in being small enough to read, retrain, and run on consumer hardware,
-while still producing grammatical Chinese.
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Params](https://img.shields.io/badge/Params-115.7M-orange.svg)](#model-details)
+[![Tokens](https://img.shields.io/badge/Tokens-1.0B-green.svg)](#training)
+[![Context](https://img.shields.io/badge/Context-2048-purple.svg)](#model-details)
+
+</div>
+
+## Why I built this
+
+I wanted to know what it actually takes to train a language model end to end — not
+call an API, not fine-tune someone else's checkpoint, but start from random weights and
+watch a model learn Chinese. So I wrote the whole pipeline myself: tokenizer, model,
+pretraining loop, and a small instruction stage. `yumiao-0.1b` is the result.
+
+It is not competitive with modern LLMs, and it is not meant to be. Its value is being
+small enough to read, retrain, and run on hardware you already own — while still
+producing grammatical Chinese. If you are learning how LLMs work, this is a
+complete, reproducible example you can pick apart.
 
 ## Model Details
 
@@ -20,63 +37,64 @@ while still producing grammatical Chinese.
 | **Normalization** | RMSNorm |
 | **Position encoding** | RoPE, base 500000 |
 | **Context length** | 2048 |
-| **Vocabulary** | 151665 (Qwen2.5 tokenizer) |
+| **Vocabulary** | 151,665 (Qwen2.5 tokenizer) |
 | **Embeddings** | Tied input/output |
 | **Precision** | FP16 |
 | **File size** | ~220 MB (FP16) |
 | **License** | MIT |
 
-## Training
+The full config is in [`config.json`](config.json):
 
-### Data
+```json
+{
+  "architectures": ["Yumiao"],
+  "model_type": "yumiao",
+  "hidden_size": 512,
+  "num_hidden_layers": 10,
+  "num_attention_heads": 8,
+  "num_key_value_heads": 2,
+  "head_dim": 64,
+  "intermediate_size": 2048,
+  "vocab_size": 151665,
+  "max_position_embeddings": 2048,
+  "rope_theta": 500000.0,
+  "rms_norm_eps": 1e-06,
+  "hidden_act": "silu",
+  "tie_word_embeddings": true,
+  "attention_bias": false,
+  "qk_norm": true,
+  "torch_dtype": "float16"
+}
+```
 
-Trained on **1.0 billion tokens**, mixed as:
+## Quick Start
 
-| Language | Share |
-|---|---|
-| Chinese | 70% |
-| English | 20% |
-| Code | 10% |
+```bash
+git clone https://github.com/yumiao-dev/yumiao-0.1b.git
+cd yumiao-0.1b
 
-Sources include FineWeb-2 (Chinese), Chinese Wikipedia, COIG, OPUS zh-en, and an English web corpus.
-**Data cutoff: approximately 2023.**
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
 
-The model was trained on 999,817,216 tokens over 1,907 steps
-(global batch 524,288 tokens/step).
+python infer.py "你是谁？"
+```
 
-### Training setup
+`infer.py` loads the weights, samples a reply, and prints it. Pass a different prompt as
+the argument. It runs on CUDA, MPS, or CPU — the device is picked automatically.
 
-- Optimizer: AdamW (β = 0.9, 0.95), weight decay 0.1
-- LR: peak 8e-4, cosine decay to 8e-5, 50-step warmup
-- Gradient clipping: 1.0
-- Precision: bfloat16
-- Hardware: single AMD MI300X (ROCm)
-
-Final validation loss: **4.57**
-
-### Identity fine-tuning
-
-After pretraining, the model was fine-tuned on ~4,500 identity samples (self-knowledge
-about name, size, architecture, license, etc.) with prompt masking — loss is computed
-only on the assistant's response, not the user's prompt.
-
-- 874 steps, LR 2e-5, prompt-masked cross-entropy
-- Final loss: **~0.12**
-
-## Usage
+Or, if you want the code in your own project:
 
 ```python
 import torch
 from tokenizers import Tokenizer
+from safetensors.torch import load_file
 from modeling_yumiao import Yumiao, CTX
 
 tok = Tokenizer.from_file("tokenizer/tokenizer.json")
-model = Yumiao().eval()
-
-from safetensors.torch import load_file
-sd = load_file("model.safetensors")
-model.load_state_dict(sd, strict=False)
-model = model.to("cuda").half()
+model = Yumiao()
+model.load_state_dict(load_file("model.safetensors"), strict=False)
+model = model.to("cuda").eval().half()
 
 @torch.no_grad()
 def generate(prompt, max_new=128, temperature=0.7, top_k=40):
@@ -98,6 +116,57 @@ def generate(prompt, max_new=128, temperature=0.7, top_k=40):
 print(generate("你是谁？"))
 ```
 
+## Training
+
+### Data
+
+Trained on **1.0 billion tokens**, mixed as:
+
+| Language | Share |
+|---|---|
+| Chinese | 70% |
+| English | 20% |
+| Code | 10% |
+
+Sources include FineWeb-2 (Chinese), Chinese Wikipedia, COIG, OPUS zh-en, and an English
+web corpus. **Data cutoff: approximately 2023.**
+
+The model saw 999,817,216 tokens over 1,907 steps (global batch 524,288 tokens/step),
+i.e. roughly 8.6 tokens per parameter.
+
+### Setup
+
+- Optimizer: AdamW (β = 0.9, 0.95), weight decay 0.1
+- LR: peak 8e-4, cosine decay to 8e-5, 50-step warmup
+- Gradient clipping: 1.0
+- Precision: bfloat16
+- Hardware: single AMD MI300X (ROCm)
+
+Final validation loss: **4.57**
+
+### Instruction stage
+
+After pretraining, the model was fine-tuned on ~4,500 identity samples (self-knowledge
+about name, size, architecture, license, etc.) with **prompt masking** — loss is computed
+only on the assistant's response, never on the user's prompt.
+
+- 874 steps, LR 2e-5, prompt-masked cross-entropy
+- Final loss: **~0.12**
+
+### Reproducing
+
+The training scripts are included and self-contained (pure PyTorch, no training
+framework). They read sharded token files from `./data/` and write checkpoints to
+`./ckpt/` — you will need to prepare your own tokenized shards first.
+
+```bash
+# pretraining: expects ./data/part_*.bin and ./data/val.bin
+python scripts/train_pretrain.py
+
+# instruction stage: expects a pretrained checkpoint and ./data/identity.jsonl
+python scripts/train_sft.py
+```
+
 ## Example Outputs
 
 ```
@@ -110,23 +179,26 @@ A: ，我是 Yumiao-0.1B。我的作者是 yumiao。我不大，只有 约 1.16 
    SwiGLU 前馈，RMSNorm 加 RoPE，还有 QK-Norm。
 ```
 
+These are real, unedited samples. Outputs are stochastic — rerun with a different
+seed and you will get different (and sometimes worse) text.
+
 ## Limitations
 
 This is a **very small model trained on a small amount of data**. Known limitations:
 
 - **No general world knowledge.** It cannot answer factual questions like "what is a cat".
   Training data was almost entirely Chinese web text plus an identity-tuning set.
-- **Weak instruction following.** It handles simple Chinese prompts and self-description well,
-  but does not generalise to arbitrary instructions.
+- **Weak instruction following.** It handles simple Chinese prompts and self-description
+  well, but does not generalise to arbitrary instructions.
 - **Repetition.** Without `repetition_penalty`, generations can loop.
   The default config sets `repetition_penalty: 1.1`.
 - **Data cutoff ~2023.** No knowledge of events after that.
 - **Chinese-first.** English output is noticeably weaker than Chinese.
 
-This model is intended for research, education, and as a starting point for
-experiments — **not** for production use or any task requiring factual accuracy.
+This model is intended for research, education, and as a starting point for experiments —
+**not** for production use or any task requiring factual accuracy.
 
-## Files
+## Repo Structure
 
 ```
 .
@@ -134,9 +206,10 @@ experiments — **not** for production use or any task requiring factual accurac
 ├── LICENSE
 ├── config.json
 ├── generation_config.json
-├── model.safetensors          # FP16 weights, 231 MB
+├── model.safetensors          # FP16 weights, 220 MB
 ├── modeling_yumiao.py         # self-contained model definition
 ├── infer.py                   # minimal generation example
+├── requirements.txt
 ├── tokenizer/
 │   ├── tokenizer.json
 │   ├── tokenizer_config.json
@@ -144,15 +217,15 @@ experiments — **not** for production use or any task requiring factual accurac
 │   └── merges.txt
 └── scripts/
     ├── train_pretrain.py      # pretraining script
-    └── train_sft.py           # identity fine-tuning script
+    └── train_sft.py           # instruction stage script
 ```
 
 ## Acknowledgements
 
 The tokenizer is derived from **Qwen2.5** (151,665 vocabulary) and is used under the
-Apache 2.0 License. The architecture borrows standard design choices from the
-open LLM literature (LLaMA-style RMSNorm/RoPE/SwiGLU, GQA from Ainslie et al.),
-but all code here was written from scratch.
+Apache 2.0 License. The architecture borrows standard design choices from the open LLM
+literature (LLaMA-style RMSNorm/RoPE/SwiGLU, GQA from Ainslie et al.), but all code here
+was written from scratch.
 
 ## License
 
