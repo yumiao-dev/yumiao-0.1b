@@ -25,6 +25,11 @@ small enough to read, retrain, and run on hardware you already own — while sti
 producing grammatical Chinese. If you are learning how LLMs work, this is a
 complete, reproducible example you can pick apart.
 
+> **A note upfront**: this is just a toy I hacked together out of boredom — it is not
+> competing with anything. With this few parameters it only does so much, and I was
+> **too embarrassed to put it on Hugging Face**: that place is for real models, and this
+> one is too humble for it. Keeping it on GitHub as a keepsake is enough.
+
 ## Model Details
 
 | | |
