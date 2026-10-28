@@ -1,0 +1,17 @@
+{
+  "tokenizer_class": "PreTrainedTokenizerFast",
+  "model_max_length": 1024,
+  "pad_token": "<pad>",
+  "bos_token": "<s>",
+  "eos_token": "</s>",
+  "unk_token": "<unk>",
+  "additional_special_tokens": [
+    "<|system|>",
+    "<|user|>",
+    "<|assistant|>"
+  ],
+  "add_bos_token": false,
+  "add_eos_token": false,
+  "clean_up_tokenization_spaces": false,
+  "chat_template": "{{ '<s>' }}{% for message in messages %}{% if message['role'] == 'system' %}{{ '<|system|>' + message['content'] }}{% elif message['role'] == 'user' %}{{ '<|user|>' + message['content'] }}{% elif message['role'] == 'assistant' %}{{ '<|assistant|>' + message['content'] + '</s>' }}{% endif %}{% endfor %}{% if add_generation_prompt %}{{ '<|assistant|>' }}{% endif %}"
+}
