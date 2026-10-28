@@ -4,6 +4,7 @@
 
 - **基座**：`Yumiao-0.1B-Base` — 纯预训练模型，用于续写 / 二次微调
 - **对话**：`Yumiao-0.1B-Chat` — 在基座上做自我认知 SFT，支持 ChatML 风格多轮对话
+- **HuggingFace**：[Yumiao-0.1B-Base](https://huggingface.co/yumiao-dev/Yumiao-0.1B-Base) ｜ [Yumiao-0.1B-Chat](https://huggingface.co/yumiao-dev/Yumiao-0.1B-Chat)
 
 > 这是一个**学习 / 研究性质**的小模型。它只有 1 亿参数，事实性知识非常有限，**不要**把它当作知识库或生产助手使用。
 
