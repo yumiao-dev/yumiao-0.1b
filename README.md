@@ -125,7 +125,7 @@ Apache License 2.0。可自由用于研究、商用与二次训练。
 
 ## 10. 评测（vs GPT-2）
 
-lm-evaluation-harness 0.4.9 · zero-shot · CPU fp32，与 Open LLM Leaderboard 同款脚本。完整报告、原始分数与对话记录在 [`eval/yumiao-vs-gpt2`](eval/yumiao-vs-gpt2/)。
+lm-evaluation-harness 0.4.9 · zero-shot · CPU fp32，与 Open LLM Leaderboard 同款脚本。完整报告、原始分数与对话记录在 [`eval/yumiao-vs-gpt2`](eval/yumiao-vs-gpt2/)，16 份 lm-eval 原始 `results.json` 在 [`eval/yumiao-vs-gpt2/raw`](eval/yumiao-vs-gpt2/raw/)。
 
 | 任务 | 指标 | 随机基线 | GPT-2 124M | Yumiao-Base 100M |
 |---|---|---|---|---|

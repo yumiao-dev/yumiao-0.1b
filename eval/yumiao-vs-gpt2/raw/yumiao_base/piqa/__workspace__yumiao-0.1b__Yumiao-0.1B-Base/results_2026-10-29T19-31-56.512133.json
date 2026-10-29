@@ -1,0 +1,122 @@
+{
+  "results": {
+    "piqa": {
+      "alias": "piqa",
+      "acc,none": 0.5952121871599565,
+      "acc_stderr,none": 0.011452361375057018,
+      "acc_norm,none": 0.5946681175190425,
+      "acc_norm_stderr,none": 0.011454816387346781
+    }
+  },
+  "group_subtasks": {
+    "piqa": []
+  },
+  "configs": {
+    "piqa": {
+      "task": "piqa",
+      "dataset_path": "baber/piqa",
+      "training_split": "train",
+      "validation_split": "validation",
+      "doc_to_text": "Question: {{goal}}\nAnswer:",
+      "doc_to_target": "label",
+      "unsafe_code": false,
+      "doc_to_choice": "{{[sol1, sol2]}}",
+      "description": "",
+      "target_delimiter": " ",
+      "fewshot_delimiter": "\n\n",
+      "num_fewshot": 0,
+      "metric_list": [
+        {
+          "metric": "acc",
+          "aggregation": "mean",
+          "higher_is_better": true
+        },
+        {
+          "metric": "acc_norm",
+          "aggregation": "mean",
+          "higher_is_better": true
+        }
+      ],
+      "output_type": "multiple_choice",
+      "repeats": 1,
+      "should_decontaminate": true,
+      "doc_to_decontamination_query": "goal",
+      "metadata": {
+        "version": 1.0,
+        "pretrained": "/workspace/yumiao-0.1b/Yumiao-0.1B-Base",
+        "dtype": "float32",
+        "device": "cpu",
+        "max_length": 1024
+      }
+    }
+  },
+  "versions": {
+    "piqa": 1.0
+  },
+  "n-shot": {
+    "piqa": 0
+  },
+  "higher_is_better": {
+    "piqa": {
+      "acc": true,
+      "acc_norm": true
+    }
+  },
+  "n-samples": {
+    "piqa": {
+      "original": 1838,
+      "effective": 1838
+    }
+  },
+  "config": {
+    "model": "hf",
+    "model_args": "pretrained=/workspace/yumiao-0.1b/Yumiao-0.1B-Base,dtype=float32,device=cpu,max_length=1024",
+    "model_num_parameters": 100092672,
+    "model_dtype": "torch.float32",
+    "model_revision": "main",
+    "model_sha": "",
+    "batch_size": "16",
+    "batch_sizes": [],
+    "device": null,
+    "use_cache": null,
+    "limit": null,
+    "bootstrap_iters": 100000,
+    "gen_kwargs": null,
+    "random_seed": 0,
+    "numpy_seed": 1234,
+    "torch_seed": 1234,
+    "fewshot_seed": 1234
+  },
+  "git_hash": null,
+  "date": 1793273258.3460844,
+  "pretty_env_info": "PyTorch version: 2.15.0+cpu\nIs debug build: False\nCUDA used to build PyTorch: None\nROCm SDK used to build PyTorch: N/A\nHIP used to build PyTorch: N/A\n\nOS: Ubuntu 24.04 LTS (x86_64)\nGCC version: (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nClang version: 17.0.0 (https://github.com/swiftlang/llvm-project.git 8f0d2ca924db37c8f8161d55c21b9097b05b72f3)\nCMake version: version 3.28.3\nLibc version: glibc-2.39\n\nPython version: 3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0] (64-bit runtime)\nPython platform: Linux-6.18.5-x86_64-with-glibc2.39\nIs CUDA available: False\nCUDA runtime version: No CUDA\nCUDA_MODULE_LOADING set to: N/A\nGPU models and configuration: No CUDA\nNvidia driver version: No CUDA\ncuDNN version: No CUDA\nIs XPU available: False\nHIP runtime version: N/A\nMIOpen runtime version: N/A\nIs XNNPACK available: False\nCaching allocator config: N/A\n\nCPU:\nArchitecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           52 bits physical, 57 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  3\nOn-line CPU(s) list:                     0,238,239\nVendor ID:                               GenuineIntel\nBIOS Vendor ID:                          QEMU\nModel name:                              INTEL(R) XEON(R) PLATINUM 8582C\nBIOS Model name:                         pc-q35-10.2  CPU @ 2.0GHz\nBIOS CPU family:                         1\nCPU family:                              6\nModel:                                   207\nThread(s) per core:                      1\nCore(s) per socket:                      1\nSocket(s):                               3\nStepping:                                2\nBogoMIPS:                                5200.00\nFlags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss syscall nx pdpe1gb rdtscp lm rep_good nopl xtopology cpuid tsc_known_freq pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch cpuid_fault ssbd ibrs ibpb stibp ibrs_enhanced fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves avx_vnni avx512_bf16 wbnoinvd arat avx512vbmi umip pku waitpkg avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid bus_lock_detect cldemote movdiri movdir64b fsrm md_clear serialize tsxldtrk avx512_fp16 arch_capabilities\nHypervisor vendor:                       KVM\nVirtualization type:                     full\nL1d cache:                               96 KiB (3 instances)\nL1i cache:                               96 KiB (3 instances)\nL2 cache:                                12 MiB (3 instances)\nL3 cache:                                48 MiB (3 instances)\nNUMA node(s):                            1\nNUMA node0 CPU(s):                       0,238,239\nVulnerability Gather data sampling:      Not affected\nVulnerability Ghostwrite:                Not affected\nVulnerability Indirect target selection: Vulnerable\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Old microcode:             Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Vulnerable\nVulnerability Spectre v1:                Vulnerable: __user pointer sanitization and usercopy barriers only; no swapgs barriers\nVulnerability Spectre v2:                Vulnerable; IBPB: disabled; STIBP: disabled; PBRSB-eIBRS: Vulnerable; BHI: Vulnerable\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Mitigation; TSX disabled\nVulnerability Vmscape:                   Not affected\n\nVersions of relevant libraries:\n[pip3] numpy==2.5.3\n[pip3] torch==2.15.0+cpu\n[conda] Could not collect",
+  "transformers_version": "4.57.1",
+  "lm_eval_version": "0.4.9.1",
+  "upper_git_hash": null,
+  "tokenizer_pad_token": [
+    "<pad>",
+    "0"
+  ],
+  "tokenizer_eos_token": [
+    "</s>",
+    "2"
+  ],
+  "tokenizer_bos_token": [
+    "<s>",
+    "1"
+  ],
+  "eot_token_id": 2,
+  "max_length": 1024,
+  "task_hashes": {},
+  "model_source": "hf",
+  "model_name": "/workspace/yumiao-0.1b/Yumiao-0.1B-Base",
+  "model_name_sanitized": "__workspace__yumiao-0.1b__Yumiao-0.1B-Base",
+  "system_instruction": null,
+  "system_instruction_sha": null,
+  "fewshot_as_multiturn": false,
+  "chat_template": null,
+  "chat_template_sha": null,
+  "start_time": 1278.889426673,
+  "end_time": 1542.767641296,
+  "total_evaluation_time_seconds": "263.8782146230001"
+}
