@@ -143,3 +143,33 @@ lm-evaluation-harness 0.4.9 · zero-shot · CPU fp32，与 Open LLM Leaderboard 
 ![准确率对比](eval/yumiao-vs-gpt2/fig_1_accuracy.png)
 
 ![困惑度对比](eval/yumiao-vs-gpt2/fig_2_perplexity.png)
+
+## 11. 图解
+
+**架构**：标准 LLaMA 解码器，12 层、d=768、GQA（12 Q / 4 KV）、SwiGLU 2048、RoPE、权重共享。
+
+![架构图](assets/fig_architecture.png)
+
+**训练流水线**：Tokenizer → 语料清洗 → 预训练 → SFT → 发布。
+
+![训练流水线](assets/fig_pipeline.png)
+
+**数据构成**：9.92B tokens 的语料池，实际训练消耗 8.0B。
+
+![数据构成](assets/fig_data.png)
+
+**参数量构成**：embedding 24.58M（与 LM head 共享），12 层 Transformer 75.52M。
+
+![参数量构成](assets/fig_parameters.png)
+
+**吞吐**：单卡 MI308X、bf16，0.1B 模型稳定在 89,500 tok/s。
+
+![吞吐](assets/fig_throughput.png)
+
+**Tokenizer 效率**：中文 1.61 字符/token（GPT-2 约 1.05）。
+
+![Tokenizer](assets/fig_tokenizer.png)
+
+**基准画像**：lm-eval 零样本准确率，GPT-2 124M 对照。
+
+![雷达图](assets/fig_radar.png)
