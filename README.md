@@ -122,3 +122,24 @@ SFT 版用约 1,000 条身份数据 + 3,000 条通用指令训练 1 个 epoch（
 ## 9. 许可
 
 Apache License 2.0。可自由用于研究、商用与二次训练。
+
+## 10. 评测（vs GPT-2）
+
+lm-evaluation-harness 0.4.9 · zero-shot · CPU fp32，与 Open LLM Leaderboard 同款脚本。完整报告、原始分数与对话记录在 [`eval/yumiao-vs-gpt2`](eval/yumiao-vs-gpt2/)。
+
+| 任务 | 指标 | 随机基线 | GPT-2 124M | Yumiao-Base 100M |
+|---|---|---|---|---|
+| LAMBADA | acc ↑ | — | 32.56% | 18.20% |
+| PIQA | acc ↑ | 50.0% | 62.89% | 59.52% |
+| WinoGrande | acc ↑ | 50.0% | 51.62% | 51.07% |
+| ARC-Easy | acc ↑ | 25.0% | 43.81% | 40.15% |
+| SciQ | acc ↑ | 25.0% | 75.20% | 76.40% |
+| C-Eval（中文） | acc ↑ | 25.0% | 23.18% | 23.63% |
+| LAMBADA | ppl ↓ | — | 40.06 | 156.61 |
+| WikiText-2 | ppl ↓ | — | 37.37 | 91.13 |
+
+英文基准上 GPT-2 占优（5 胜 3 平），中文生成与身份对话 Yumiao 占优；两者中文知识选择题都接近随机。
+
+![准确率对比](eval/yumiao-vs-gpt2/fig_1_accuracy.png)
+
+![困惑度对比](eval/yumiao-vs-gpt2/fig_2_perplexity.png)

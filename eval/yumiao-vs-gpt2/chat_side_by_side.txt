@@ -1,0 +1,27 @@
+params: Yumiao-Chat 100.1M | GPT-2 124.4M
+======================================================================
+
+[PROMPT] 你是谁？
+Yumiao-Chat> 我是 Yumiao-0.1B，yumiao 训练的 1 亿参数模型。
+GPT-2       > 一件什么接谁。而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而
+----------------------------------------------------------------------
+
+[PROMPT] 介绍一下你自己
+Yumiao-Chat> 我是 Yumiao-0.1B，是 yumiao 训练的 0.1B 模型。
+GPT-2       > 做建谀的种採同觉下的小政知道。那么有介绍一下一你自己做建谀的种採同觉下的小政知道。  �
+----------------------------------------------------------------------
+
+[PROMPT] 中国的首都是哪里？
+Yumiao-Chat> 北京、深圳和东莞是其中两个比较著名的城市。
+GPT-2       > 。 "This is a wonderful, unique, beautiful, beautiful place. I really want to visit you there." 「是是,倒后倒后倒后倒后」 「倒后? What about you?」 「I see」 「是,倒后倒后倒后」 「是,倒后倒后�
+----------------------------------------------------------------------
+
+[PROMPT] 1+1等于多少？
+Yumiao-Chat> 2 + 1 = 100
+GPT-2       > +1书健月５３+1個+1絶景+1频+1世+1個+1個+1他+1個+1個+1他+1個+1他+1個+1他+1個+1他+1個
+----------------------------------------------------------------------
+
+[PROMPT] The capital of France is
+Yumiao-Chat> I am the spouse and aunt, I am the staff member in France.
+GPT-2       > a small village, and the city has a population of just over 200,000. In recent years it has become a hub of the country's oil trade. In March 2011, the city was granted a free vote in the European Parliament to pass a constitutional amendment banning the use of the name "Pew".  The country's oil revenues are also being taxed in the same way as they are in the United States. As of 2011, the national tax on oil sales in
+----------------------------------------------------------------------

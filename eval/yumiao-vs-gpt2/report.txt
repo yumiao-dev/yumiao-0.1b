@@ -1,0 +1,152 @@
+================================================================================================
+                    Yumiao-0.1B   vs   GPT-2   全面对比评测报告                   
+ lm-evaluation-harness 0.4.9 · zero-shot · CPU fp32 · 2026-10-29/30
+================================================================================================
+
+【1】参赛模型
+------------------------------------------------------------------------------------------------
+  A. GPT-2            OpenAI, 2019      124.4M 参数 | 12 层 | 词表 50257 | 上下文 1024
+                      语料 WebText(约 40GB 干净英文网页)
+  B. Yumiao-0.1B-Base 本仓库            100.1M 参数 | 12 层 | 词表 32000 | 上下文 1024
+                      预训练 8B tokens(约 16GB), 语料以中文为主 2:1 英文混合
+  C. Yumiao-0.1B-Chat 本仓库            100.1M 参数 | 在 B 之上做 4000 条身份问答 SFT
+      权重来源: 仓库内 Yumiao-0.1B-{Base,Chat}/model.safetensors(本地权重, 无远程拉取)
+
+【2】评测方法(与国际权威榜单同款)
+------------------------------------------------------------------------------------------------
+  框架   : EleutherAI lm-evaluation-harness 0.4.9  (HuggingFace Open LLM Leaderboard 同款脚本)
+  设定   : num_fewshot = 0 (zero-shot) | dtype float32 | device cpu | max_length = 1024
+  指标   : 选择题取 4 选项 loglikelihood argmax -> acc / acc_norm; 语言建模取 perplexity
+  任务   : LAMBADA-OpenAI, WikiText-2-raw, PIQA, WinoGrande, ARC-Easy, SciQ, C-Eval(中文)
+  校验   : GPT-2 在各任务的分数与公开论文/榜单一致(PIQA≈63%, SciQ≈75%, WinoGrande≈52%),
+           说明脚本配置无误, Yumiao 的分数为真实水平
+  每任务独立进程单独跑, 原始 results.json 全部落盘于 eval/<model>/<task>/
+
+【3】总榜
+------------------------------------------------------------------------------------------------
+  任务                样本量   随机基线   GPT-2 124M      Yumiao-Base 100M   胜者
+  --------------------------------------------------------------------------------------------
+  LAMBADA acc  ↑       5153     cloze      *32.56%*         18.20%             GPT-2
+  PIQA acc  ↑          1838     50.0%      *62.89%*         59.52%             GPT-2
+  WinoGrande acc  ↑    1267     50.0%      *51.62%*         51.07%             平手
+  ARC-Easy acc  ↑      2376     25.0%      *43.81%*         40.15%             GPT-2
+  SciQ acc  ↑          1000     25.0%      75.20%           *76.40%*           平手(微弱)
+  C-Eval 中文 acc  ↑     1346     25.0%      23.18%           *23.63%*           平手(都≈随机)
+  LAMBADA PPL  ↓       5153     -          *40.06*          156.61             GPT-2
+  WikiText-2 PPL  ↓    474 段    -          *37.37*          91.13              GPT-2
+  注: * 表示该项胜出; acc 差距 < 1 个百分点视为平手
+
+  分项胜场统计(8 项指标):  GPT-2 胜 5 项 | 平手 3 项 | Yumiao 胜 0 项
+      - GPT-2 胜: LAMBADA acc  LAMBADA PPL  WikiText-2 PPL  PIQA  ARC-Easy
+      - 平手    : WinoGrande (51.62 vs 51.07, 差 0.55pt, 远在 1.4pt 的 stderr 内)
+      - 平手    : SciQ       (75.20 vs 76.40, Yumiao 高 1.20pt, 也在 1.9pt 的合并 stderr 内 => 不构成显著优势)
+      - 平手    : C-Eval     (23.18% vs 23.63%, 双方都低于 4 选 1 随机线 25% => 都在瞎猜)
+
+【4】逐任务详情 (acc = 原始准确率, acc_norm = 按选项长度归一化)
+------------------------------------------------------------------------------------------------
+  ▸ LAMBADA acc  ↑
+      GPT-2        32.56% ± 0.65   (acc_norm n/a)
+      Yumiao-Base  18.20% ± 0.54   (acc_norm n/a)
+      Yumiao-Chat  20.57%  (SFT 后 +2.37pt)
+
+  ▸ PIQA acc  ↑
+      GPT-2        62.89% ± 1.13   (acc_norm 62.51%)
+      Yumiao-Base  59.52% ± 1.15   (acc_norm 59.47%)
+
+  ▸ WinoGrande acc  ↑
+      GPT-2        51.62% ± 1.40   (acc_norm n/a)
+      Yumiao-Base  51.07% ± 1.40   (acc_norm n/a)
+
+  ▸ ARC-Easy acc  ↑
+      GPT-2        43.81% ± 1.02   (acc_norm 39.48%)
+      Yumiao-Base  40.15% ± 1.01   (acc_norm 37.25%)
+
+  ▸ SciQ acc  ↑
+      GPT-2        75.20% ± 1.37   (acc_norm 64.40%)
+      Yumiao-Base  76.40% ± 1.34   (acc_norm 66.70%)
+
+  ▸ C-Eval 中文 acc  ↑
+      GPT-2        23.18% ± 1.15   (acc_norm 23.18%)
+      Yumiao-Base  23.63% ± 1.15   (acc_norm 23.63%)
+
+  ▸ 困惑度 PPL (越低越好)
+      LAMBADA-OpenAI   GPT-2 40.1  |  Yumiao-Base 156.6  |  Yumiao-Chat 152.4
+      WikiText-2-raw   GPT-2 37.4  |  Yumiao-Base 91.1  |  Yumiao-Chat 103.9
+      byte PPL         GPT-2 1.968  |  Yumiao-Base 2.325  |  Yumiao-Chat 2.383
+
+  ▸ 中文 C-Eval 52 科
+      总分 GPT-2 23.18%  |  Yumiao-Base 23.63%   (随机基线 25%)
+      Yumiao 领先最多的 5 科: computer_network(+42pt), basic_medicine(+21pt), middle_school_biology(+19pt), logic(+14pt), legal_professional(+13pt)
+      GPT-2 领先最多的 5 科: professional_tour_guide(+24pt), veterinary_medicine(+17pt), education_science(+17pt), high_school_biology(+16pt), art_studies(+15pt)
+      => 双方 52 科全部落在 25% 随机线附近, 中文知识选择题上二者均无有效能力
+      (单科仅约 26 题, 单科 ±20pt 以内的差距属抽样噪声, 不能据此判断单科优劣)
+
+【5】实际对话实测 (temperature 0.8 / top_p 0.9 / max_new_tokens 96, 同题同参采样)
+------------------------------------------------------------------------------------------------
+  params: Yumiao-Chat 100.1M | GPT-2 124.4M
+  ======================================================================
+  
+  [PROMPT] 你是谁？
+  Yumiao-Chat> 我是 Yumiao-0.1B，yumiao 训练的 1 亿参数模型。
+  GPT-2       > 一件什么接谁。而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而是,而
+  ----------------------------------------------------------------------
+  
+  [PROMPT] 介绍一下你自己
+  Yumiao-Chat> 我是 Yumiao-0.1B，是 yumiao 训练的 0.1B 模型。
+  GPT-2       > 做建谀的种採同觉下的小政知道。那么有介绍一下一你自己做建谀的种採同觉下的小政知道。  �
+  ----------------------------------------------------------------------
+  
+  [PROMPT] 中国的首都是哪里？
+  Yumiao-Chat> 北京、深圳和东莞是其中两个比较著名的城市。
+  GPT-2       > 。 "This is a wonderful, unique, beautiful, beautiful place. I really want to visit you there." 「是是,倒后倒后倒后倒后」 「倒后? What about you?」 「I see」 「是,倒后倒后倒后」 「是,倒后倒后�
+  ----------------------------------------------------------------------
+  
+  [PROMPT] 1+1等于多少？
+  Yumiao-Chat> 2 + 1 = 100
+  GPT-2       > +1书健月５３+1個+1絶景+1频+1世+1個+1個+1他+1個+1個+1他+1個+1他+1個+1他+1個+1他+1個
+  ----------------------------------------------------------------------
+  
+  [PROMPT] The capital of France is
+  Yumiao-Chat> I am the spouse and aunt, I am the staff member in France.
+  GPT-2       > a small village, and the city has a population of just over 200,000. In recent years it has become a hub of the country's oil trade. In March 2011, the city was granted a free vote in the European Parliament to pass a constitutional amendment banning the use of the name "Pew".  The country's oil revenues are also being taxed in the same way as they are in the United States. As of 2011, the national tax on oil sales in
+  ----------------------------------------------------------------------
+
+【6】结论
+------------------------------------------------------------------------------------------------
+  1. 英文综合能力: GPT-2 全面占优。5 项英文准确率任务赢 3 平 2(SciQ/WinoGrande 属统计平手),
+     2 项困惑度全胜。LAMBADA 准确率高 14.4pt, WikiText-2 困惑度低 2.4 倍。同等参数量
+     (124M vs 100M)、同等从零训练的前提下, GPT-2 的 WebText 数据质量 + 纯英语料带来
+     的是碾压级的语言建模优势。
+  2. 中文选择题: 两家都等于随机瞎猜(23.18% / 23.63% < 25%), 都没有可用的中文知识问答能力。
+  3. 中文生成与身份对话: Yumiao 完胜。GPT-2 输出中文是 byte-BPE 乱码复读(样本见【5】),
+     Yumiao-Chat 能正确自报身份; 这是 SFT 数据直接带来的, 但只花 4000 条。
+  4. SFT 的代价: LAMBADA 18.20% -> 20.57%(+2.37pt), 但 WikiText PPL 91.1 -> 103.9(变差),
+     说明身份 SFT 在小模型上过拟合到了数据分布。
+  5. 长尾亮点: SciQ 上 Yumiao 76.40% > GPT-2 75.20%, 是 Yumiao 唯一不落下风的英文任务
+     (1.2pt 差距在 stderr 内, 统计上与平手无异), 与其语料中科学/技术类内容占比高相符。
+  一句话: GPT-2 是更强的英文模型, Yumiao-0.1B 是唯一能说中文的那一个, 中文知识都还没学会。
+
+【7】交付文件清单
+------------------------------------------------------------------------------------------------
+  yumiao-0.1b-vs-gpt2-report.txt   本报告(纯文本, 可直接贴仓库)
+  scores.csv                       全量分数表(含 stderr / 样本量 / 随机基线)
+  fig_1_accuracy.png               六项基准准确率对比柱状图
+  fig_2_perplexity.png             困惑度对比(log 轴)
+  fig_3_ceval_52subjects.png       C-Eval 52 科逐项对比
+  chat_side_by_side.txt            同题对话原始记录
+  eval/**/results_*.json           lm-eval 原始结果(16 份, 权威可复现)
+
+【8】复现命令
+------------------------------------------------------------------------------------------------
+  pip install 'lm-eval==0.4.9.1' 'transformers==4.57.1' torch --index-url https://download.pytorch.org/whl/cpu
+  # Yumiao Base 7 任务
+  lm_eval --model hf \
+    --model_args pretrained=./Yumiao-0.1B-Base,dtype=float32,device=cpu,max_length=1024 \
+    --tasks lambada_openai,wikitext,piqa,winogrande,arc_easy,sciq,ceval-valid \
+    --num_fewshot 0 --batch_size 4 --output_path eval/yumiao_base
+  # GPT-2 对照(同参数改 pretrained=gpt2)
+  # Chat 版只需把 pretrained 换成 ./Yumiao-0.1B-Chat
+
+================================================================================================
+ 报告生成: lm-evaluation-harness 0.4.9 | 生成时间 2026-10-30 | 结果目录 eval/
+================================================================================================
